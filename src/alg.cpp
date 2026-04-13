@@ -16,9 +16,9 @@ std::string infx2pstfx(const std::string& inf) {
 
     for (size_t i = 0; i < inf.length(); ++i) {
         char c = inf[i];
-
+        
         if (c == ' ') continue;
-
+        
         if (isdigit(c)) {
             while (i < inf.length() && isdigit(inf[i])) {
                 result += inf[i];
@@ -29,18 +29,18 @@ std::string infx2pstfx(const std::string& inf) {
         } else if (c == '(') {
             stack.push(c);
         } else if (c == ')') {
-            while (!stack.isEmpty() && stack.get() != '(') {
-                result += stack.get();
+            while (!stack.empty() && stack.top() != '(') {
+                result += stack.top();
                 result += ' ';
                 stack.pop();
             }
-            if (!stack.isEmpty() && stack.get() == '(') {
+            if (!stack.empty() && stack.top() == '(') {
                 stack.pop();
             }
         } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            while (!stack.isEmpty() && stack.get() != '(' &&
-                   getPriority(stack.get()) >= getPriority(c)) {
-                result += stack.get();
+            while (!stack.empty() && stack.top() != '(' &&
+                   getPriority(stack.top()) >= getPriority(c)) {
+                result += stack.top();
                 result += ' ';
                 stack.pop();
             }
@@ -48,8 +48,8 @@ std::string infx2pstfx(const std::string& inf) {
         }
     }
 
-    while (!stack.isEmpty()) {
-        result += stack.get();
+    while (!stack.empty()) {
+        result += stack.top();
         result += ' ';
         stack.pop();
     }
@@ -78,12 +78,12 @@ int eval(const std::string& post) {
             stack.push(num);
             --i;
         } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            if (stack.isEmpty()) return 0;
-            int b = stack.get();
+            if (stack.empty()) return 0;
+            int b = stack.top();
             stack.pop();
 
-            if (stack.isEmpty()) return 0;
-            int a = stack.get();
+            if (stack.empty()) return 0;
+            int a = stack.top();
             stack.pop();
 
             int result = 0;
@@ -100,6 +100,6 @@ int eval(const std::string& post) {
         }
     }
 
-    if (stack.isEmpty()) return 0;
-    return stack.get();
+    if (stack.empty()) return 0;
+    return stack.top();
 }
