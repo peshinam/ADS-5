@@ -103,6 +103,3 @@ int eval(const std::string& post) {
     if (stack.isEmpty()) return 0;
     return stack.get();
 }
-    if (stack.empty()) return 0;
-    return stack.top();
-}
