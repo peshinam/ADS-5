@@ -9,6 +9,7 @@ int getPriority(char op) {
     if (op == '*' || op == '/') return 2;
     return 0;
 }
+
 std::string infx2pstfx(const std::string& inf) {
     TStack<char, 100> stack;
     std::string result;
@@ -28,18 +29,18 @@ std::string infx2pstfx(const std::string& inf) {
         } else if (c == '(') {
             stack.push(c);
         } else if (c == ')') {
-            while (!stack.empty() && stack.top() != '(') {
-                result += stack.top();
+            while (!stack.isEmpty() && stack.get() != '(') {
+                result += stack.get();
                 result += ' ';
                 stack.pop();
             }
-            if (!stack.empty() && stack.top() == '(') {
+            if (!stack.isEmpty() && stack.get() == '(') {
                 stack.pop();
             }
         } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            while (!stack.empty() && stack.top() != '(' && 
-                   getPriority(stack.top()) >= getPriority(c)) {
-                result += stack.top();
+            while (!stack.isEmpty() && stack.get() != '(' &&
+                   getPriority(stack.get()) >= getPriority(c)) {
+                result += stack.get();
                 result += ' ';
                 stack.pop();
             }
@@ -47,8 +48,8 @@ std::string infx2pstfx(const std::string& inf) {
         }
     }
 
-    while (!stack.empty()) {
-        result += stack.top();
+    while (!stack.isEmpty()) {
+        result += stack.get();
         result += ' ';
         stack.pop();
     }
@@ -77,12 +78,12 @@ int eval(const std::string& post) {
             stack.push(num);
             --i;
         } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            if (stack.empty()) return 0;
-            int b = stack.top();
+            if (stack.isEmpty()) return 0;
+            int b = stack.get();
             stack.pop();
 
-            if (stack.empty()) return 0;
-            int a = stack.top();
+            if (stack.isEmpty()) return 0;
+            int a = stack.get();
             stack.pop();
 
             int result = 0;
@@ -90,7 +91,7 @@ int eval(const std::string& post) {
                 case '+': result = a + b; break;
                 case '-': result = a - b; break;
                 case '*': result = a * b; break;
-                case '/': 
+                case '/':
                     if (b != 0) result = a / b;
                     else return 0;
                     break;
@@ -99,6 +100,9 @@ int eval(const std::string& post) {
         }
     }
 
+    if (stack.isEmpty()) return 0;
+    return stack.get();
+}
     if (stack.empty()) return 0;
     return stack.top();
 }
