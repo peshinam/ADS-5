@@ -18,11 +18,11 @@ std::string infx2pstfx(const std::string& inf) {
     TStack<char, 100> stack;
     std::string result = "";
 
-    for (int i = 0; i < (int)inf.length(); i++) {
+    for (size_t i = 0; i < inf.length(); i++) {
         char c = inf[i];
 
         if (isdigit(c)) {
-            while (i < (int)inf.length() && isdigit(inf[i])) {
+            while (i < inf.length() && isdigit(inf[i])) {
                 result = result + inf[i];
                 i++;
             }
@@ -63,12 +63,12 @@ std::string infx2pstfx(const std::string& inf) {
 int eval(const std::string& post) {
     TStack<int, 100> stack;
 
-    for (int i = 0; i < (int)post.length(); i++) {
+    for (size_t i = 0; i < post.length(); i++) {
         char c = post[i];
 
         if (isdigit(c)) {
             int number = 0;
-            while (i < (int)post.length() && isdigit(post[i])) {
+            while (i < post.length() && isdigit(post[i])) {
                 number = number * 10 + (post[i] - '0');
                 i++;
             }
