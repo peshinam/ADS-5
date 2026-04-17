@@ -4,58 +4,64 @@
 #include <cctype>
 #include "tstack.h"
 
-int getPriority(char op) {
-    if (op == '+' || op == '-') return 1;
-    if (op == '*' || op == '/') return 2;
+int priority(char op) {
+    if (op == '+' || op == '-') {
+        return 1;
+    }
+    if (op == '*' || op == '/') {
+        return 2;
+    }
     return 0;
 }
 
 std::string infx2pstfx(const std::string& inf) {
     TStack<char, 100> stack;
-    std::string result;
-
-    for (size_t i = 0; i < inf.length(); ++i) {
+    std::string result = "";
+    
+    for (int i = 0; i < inf.length(); i++) {
         char c = inf[i];
-        
-        if (c == ' ') continue;
-        
-        if (isdigit(c)) {
-            while (i < inf.length() && isdigit(inf[i])) {
-                result += inf[i];
-                ++i;
+
+        if (c >= '0' && c <= '9') {
+
+            while (i < inf.length() && inf[i] >= '0' && inf[i] <= '9') {
+                result = result + inf[i];
+                i++;
             }
-            result += ' ';
-            --i;
-        } else if (c == '(') {
+            result = result + ' ';
+            i--;
+        }
+
+        else if (c == '(') {
             stack.push(c);
-        } else if (c == ')') {
-            while (!stack.empty() && stack.top() != '(') {
-                result += stack.top();
-                result += ' ';
+        }
+
+        else if (c == ')') {
+            while (!stack.isEmpty() && stack.getTop() != '(') {
+                result = result + stack.pop();
+                result = result + ' ';
+            }
+            if (!stack.isEmpty() && stack.getTop() == '(') {
                 stack.pop();
             }
-            if (!stack.empty() && stack.top() == '(') {
-                stack.pop();
-            }
-        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            while (!stack.empty() && stack.top() != '(' &&
-                   getPriority(stack.top()) >= getPriority(c)) {
-                result += stack.top();
-                result += ' ';
-                stack.pop();
+        }
+
+        else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            while (!stack.isEmpty() && stack.getTop() != '(' && 
+                   priority(stack.getTop()) >= priority(c)) {
+                result = result + stack.pop();
+                result = result + ' ';
             }
             stack.push(c);
         }
     }
 
-    while (!stack.empty()) {
-        result += stack.top();
-        result += ' ';
-        stack.pop();
+    while (!stack.isEmpty()) {
+        result = result + stack.pop();
+        result = result + ' ';
     }
 
-    if (!result.empty() && result.back() == ' ') {
-        result.pop_back();
+    if (result.length() > 0 && result[result.length() - 1] == ' ') {
+        result = result.substr(0, result.length() - 1);
     }
 
     return result;
@@ -64,42 +70,41 @@ std::string infx2pstfx(const std::string& inf) {
 int eval(const std::string& post) {
     TStack<int, 100> stack;
 
-    for (size_t i = 0; i < post.length(); ++i) {
+    for (int i = 0; i < post.length(); i++) {
         char c = post[i];
 
-        if (c == ' ') continue;
+        if (c >= '0' && c <= '9') {
+            int number = 0;
 
-        if (isdigit(c)) {
-            int num = 0;
-            while (i < post.length() && isdigit(post[i])) {
-                num = num * 10 + (post[i] - '0');
-                ++i;
+            while (i < post.length() && post[i] >= '0' && post[i] <= '9') {
+                number = number * 10 + (post[i] - '0');
+                i++;
             }
-            stack.push(num);
-            --i;
-        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            if (stack.empty()) return 0;
-            int b = stack.top();
-            stack.pop();
+            stack.push(number);
+            i--;
+        }
 
-            if (stack.empty()) return 0;
-            int a = stack.top();
-            stack.pop();
+        else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            int b = stack.pop();
+            int a = stack.pop();
+            int res = 0;
 
-            int result = 0;
-            switch (c) {
-                case '+': result = a + b; break;
-                case '-': result = a - b; break;
-                case '*': result = a * b; break;
-                case '/':
-                    if (b != 0) result = a / b;
-                    else return 0;
-                    break;
+            if (c == '+') {
+                res = a + b;
             }
-            stack.push(result);
+            else if (c == '-') {
+                res = a - b;
+            }
+            else if (c == '*') {
+                res = a * b;
+            }
+            else if (c == '/') {
+                res = a / b;
+            }
+
+            stack.push(res);
         }
     }
 
-    if (stack.empty()) return 0;
-    return stack.top();
+    return stack.pop();
 }
