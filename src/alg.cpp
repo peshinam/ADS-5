@@ -17,25 +17,20 @@ int priority(char op) {
 std::string infx2pstfx(const std::string& inf) {
     TStack<char, 100> stack;
     std::string result = "";
-    
-    for (int i = 0; i < inf.length(); i++) {
+
+    for (int i = 0; i < (int)inf.length(); i++) {
         char c = inf[i];
 
-        if (c >= '0' && c <= '9') {
-
-            while (i < inf.length() && inf[i] >= '0' && inf[i] <= '9') {
+        if (isdigit(c)) {
+            while (i < (int)inf.length() && isdigit(inf[i])) {
                 result = result + inf[i];
                 i++;
             }
             result = result + ' ';
             i--;
-        }
-
-        else if (c == '(') {
+        } else if (c == '(') {
             stack.push(c);
-        }
-
-        else if (c == ')') {
+        } else if (c == ')') {
             while (!stack.isEmpty() && stack.getTop() != '(') {
                 result = result + stack.pop();
                 result = result + ' ';
@@ -43,10 +38,8 @@ std::string infx2pstfx(const std::string& inf) {
             if (!stack.isEmpty() && stack.getTop() == '(') {
                 stack.pop();
             }
-        }
-
-        else if (c == '+' || c == '-' || c == '*' || c == '/') {
-            while (!stack.isEmpty() && stack.getTop() != '(' && 
+        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            while (!stack.isEmpty() && stack.getTop() != '(' &&
                    priority(stack.getTop()) >= priority(c)) {
                 result = result + stack.pop();
                 result = result + ' ';
@@ -61,7 +54,7 @@ std::string infx2pstfx(const std::string& inf) {
     }
 
     if (result.length() > 0 && result[result.length() - 1] == ' ') {
-        result = result.substr(0, result.length() - 1);
+        result.resize(result.length() - 1);
     }
 
     return result;
@@ -70,35 +63,29 @@ std::string infx2pstfx(const std::string& inf) {
 int eval(const std::string& post) {
     TStack<int, 100> stack;
 
-    for (int i = 0; i < post.length(); i++) {
+    for (int i = 0; i < (int)post.length(); i++) {
         char c = post[i];
 
-        if (c >= '0' && c <= '9') {
+        if (isdigit(c)) {
             int number = 0;
-
-            while (i < post.length() && post[i] >= '0' && post[i] <= '9') {
+            while (i < (int)post.length() && isdigit(post[i])) {
                 number = number * 10 + (post[i] - '0');
                 i++;
             }
             stack.push(number);
             i--;
-        }
-
-        else if (c == '+' || c == '-' || c == '*' || c == '/') {
+        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
             int b = stack.pop();
             int a = stack.pop();
             int res = 0;
 
             if (c == '+') {
                 res = a + b;
-            }
-            else if (c == '-') {
+            } else if (c == '-') {
                 res = a - b;
-            }
-            else if (c == '*') {
+            } else if (c == '*') {
                 res = a * b;
-            }
-            else if (c == '/') {
+            } else if (c == '/') {
                 res = a / b;
             }
 
