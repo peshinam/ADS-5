@@ -4,11 +4,10 @@
 
 template<typename T, int N>
 class TStack {
-private:
+ private:
     T arr[N];
     int top;
-
-public:
+ public:
     TStack() {
         top = -1;
     }
@@ -22,8 +21,9 @@ public:
 
     T pop() {
         if (top >= 0) {
+            T result = arr[top];
             top--;
-            return arr[top + 1];
+            return result;
         }
         return T();
     }
